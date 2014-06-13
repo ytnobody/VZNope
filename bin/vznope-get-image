@@ -1,0 +1,20 @@
+#!perl
+
+use strict;
+use warnings;
+use VZNope;
+
+my $target = $ARGV[0];
+
+unless ($target) {
+    print do{local $/; <DATA>};
+    exit;
+}
+
+VZNope->get_image($target);
+
+__DATA__
+usage:
+
+  vznope-get-image [image-name]
+

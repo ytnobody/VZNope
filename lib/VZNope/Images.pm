@@ -4,18 +4,26 @@ use warnings;
 use LWP::UserAgent;
 use Carp;
 use Time::Piece;
+use File::Spec;
 
-our $BASEURL = $ENV{VZNOPE_IMAGES_URL} || 'http://download.openvz.org/template/precreated/';
+our $BASEURL  = $ENV{VZNOPE_IMAGES_URL} || 'http://download.openvz.org/template/precreated/';
+our $CACHEDIR = $ENV{VZNOPE_IMAGE_CACHE_DIR} || File::Spec->catdir(qw|/ var lib vz template cache|);
 
 my $agent = LWP::UserAgent->new(agent => __PACKAGE__);
 
-sub get_list {
-    my ($class, $subtype) = @_;
-    my $url = $subtype ? $BASEURL.$subtype : $BASEURL;
+sub req {
+    my ($class, $url) = @_;
     my $res = $agent->get($url);
     unless ($res->is_success) {
         croak($res->status_line);
     }
+    $res;
+}
+
+sub get_list {
+    my ($class, $subtype) = @_;
+    my $url = $subtype ? $BASEURL.$subtype : $BASEURL;
+    my $res = $class->req($url);
     my @matched = 
         $res->content =~ 
         m|<td><a href="(.+?).tar.gz">.+?</a></td><td align="right">(.+?)  </td><td align="right">(.+?)</td>|g;
@@ -26,6 +34,32 @@ sub get_list {
     }
 
     @images;
+}
+
+sub get_subtypes {
+    my $class = shift;
+    my $url = $BASEURL;
+    my $res = $class->req($url);
+
+    my @matched = 
+        $res->content =~ 
+        m|<td><a href="(.+?)/">.+?</a></td><td align="right">(.+?)  </td>|g;
+
+    my @subtypes;
+    while ( my ($name, $modified) = splice @matched, 0, 2 ) {
+        push @subtypes, {name => $name, modified => Time::Piece->strptime($modified, '%d-%b-%Y %H:%M')};
+    }
+
+    @subtypes;
+}
+
+sub fetch {
+    my ($class, $target, $subtype) = @_;
+
+    my $url = $subtype ? "$BASEURL$subtype/$target.tar.gz" : "$BASEURL$target.tar.gz";
+    my $dest_path = File::Spec->catfile($CACHEDIR, "$target.tar.gz");
+
+    system('wget', $url, '-O', $dest_path);
 }
 
 1;
