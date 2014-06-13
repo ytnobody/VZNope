@@ -4,17 +4,17 @@ use strict;
 use warnings;
 use VZNope;
 
-my $target = $ARGV[0];
+my ($target, $subtype) = @ARGV;
 
 unless ($target) {
     print do{local $/; <DATA>};
     exit;
 }
 
-VZNope->get_image($target);
+VZNope->get_image($target, $subtype);
 
 __DATA__
 usage:
 
-  vznope-get-image [image-name]
+  vznope-get-image [image-name] [subtype]
 

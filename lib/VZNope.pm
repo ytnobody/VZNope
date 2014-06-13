@@ -16,6 +16,11 @@ sub image_subtypes {
     VZNope::Images->get_subtypes;
 }
 
+sub get_image {
+    my ($class, $name, $subtype) = @_;
+    VZNope::Images->fetch($name, $subtype);
+}
+
 
 1;
 __END__
