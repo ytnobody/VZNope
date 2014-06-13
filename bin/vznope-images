@@ -1,0 +1,19 @@
+#!perl
+use strict;
+use warnings;
+use VZNope;
+use List::Util 'max';
+
+my $search = $ARGV[0];
+
+my @images = grep {$_->{name} =~ /$search/} VZNope->images;
+
+my $name_length = max(map {length($_->{name})} @images);
+my $format = '% '. $name_length. "s\t%s\t%s\n";
+
+printf $format, qw|name size modified at|;
+
+for my $image (@images) {
+    printf $format, $image->{name}, $image->{size}, $image->{modified}->strftime('%Y-%m-%d %H:%M');
+}
+
