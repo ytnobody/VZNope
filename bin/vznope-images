@@ -1,0 +1,11 @@
+#!/usr/bin/env perl
+
+use strict;
+use warnings;
+use VZNope;
+
+my @images = VZNope->images;
+
+for my $image (@images) {
+    printf "%s    %s\n", $image->{name}, $image->{update}->strftime('%Y-%m-%d %H:%M');
+}

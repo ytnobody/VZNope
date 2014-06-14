@@ -21,6 +21,18 @@ sub req {
 }
 
 sub get_list {
+    my $class = shift;
+    my $search_path = File::Spec->catfile($CACHEDIR, '*.tar.gz');
+    map {
+        my @stat = stat $_;
+        my $name = $_;
+        $name =~ s|$CACHEDIR/||;
+        { name => $name, update => Time::Piece->strptime($stat[9], '%s') };
+    } glob $search_path;
+    
+}
+
+sub get_available {
     my ($class, $subtype) = @_;
     my $url = $subtype ? $BASEURL.$subtype : $BASEURL;
     my $res = $class->req($url);

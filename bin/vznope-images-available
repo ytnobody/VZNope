@@ -1,4 +1,4 @@
-#!perl
+#!/usr/bin/env perl
 use strict;
 use warnings;
 use VZNope;
@@ -6,7 +6,7 @@ use List::Util 'max';
 
 my $subtype = $ARGV[0] || '';
 
-my @images = $subtype eq 'subtypes' ? VZNope->image_subtypes : VZNope->images($subtype);
+my @images = $subtype eq 'subtypes' ? VZNope->image_subtypes : VZNope->images_available($subtype);
 
 my $name_length = max(map {length($_->{name})} @images);
 my $format = '% '. $name_length. "s    % 6s    % 16s\n";

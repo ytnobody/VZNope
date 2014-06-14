@@ -1,0 +1,13 @@
+#!/bin/bash
+
+bindir=$(dirname $0)
+subcmd=$1 ; shift
+
+if [ -z "$subcmd" ] ; then
+    subcmd=help
+fi
+
+export PERL5LIB=$bindir/../lib
+export PATH=$bindir:$PATH
+
+vznope-$subcmd $*

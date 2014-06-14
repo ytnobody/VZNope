@@ -7,8 +7,13 @@ use VZNope::Images;
 our $VERSION = "0.01";
 
 sub images {
+    my ($class) = @_;
+    VZNope::Images->get_list;
+}
+
+sub images_available {
     my ($class, $subtype) = @_;
-    VZNope::Images->get_list($subtype);
+    VZNope::Images->get_available($subtype);
 }
 
 sub image_subtypes {
