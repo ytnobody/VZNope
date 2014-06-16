@@ -37,6 +37,11 @@ sub destroy_container {
     VZNope::Container->destroy($ident);
 }
 
+sub containers {
+    my $class = shift;
+    VZNope::Container->list;
+}
+
 1;
 __END__
 

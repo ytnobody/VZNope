@@ -3,10 +3,13 @@ package VZNope::Container;
 use strict;
 use warnings;
 use VZNope::Constants;
-use VZNope::Util qw|random_name|;
+use VZNope::Util qw|random_name parse_conf|;
 use Sys::HostIP;
 use Guard;
 use Cwd;
+use File::Slurp;
+
+our $VEID;
 
 sub create {
     my ($class, %opts) = @_;
@@ -49,6 +52,35 @@ sub create {
 sub destroy {
     my ($class, $ident) = @_;
     system('vzctl', destroy => $ident);
+}
+
+sub list {
+    my $class = shift;
+    my $privdir = PRIVDIR;
+    my $glob = File::Spec->catdir($privdir, '*');
+    my @ct_list = glob($glob);
+    map {
+        my ($id) = $_ =~ m|^$privdir/([0-9]+)$|;
+        my $conf = $class->conf($id);
+        my $status = $class->is_running($id);
+        { VEID => $id, STATUS => $status, %$conf };
+    } @ct_list;
+}
+
+sub conf {
+    my ($class, $id) = @_;
+    my $conf_file = File::Spec->catfile(CT_CONFDIR, $id. '.conf');
+    my @lines = read_file($conf_file) or die $!;
+    parse_conf(@lines);
+}
+
+sub is_running {
+    my ($class, $id) = @_;
+    my $conf = $class->conf($id);
+    my $ve_root = $conf->{VE_ROOT};
+    $ve_root =~ s/"//g;
+    $ve_root =~ s/\$VEID/$id/g;
+    scalar(glob "$ve_root/*") ? 'running' : 'stopped';
 }
 
 1;

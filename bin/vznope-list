@@ -1,3 +1,21 @@
-#!/bin/bash
+#!/usr/bin/env perl
 
-vzlist -a
+use strict;
+use warnings;
+use VZNope;
+
+my @containers = VZNope->containers;
+
+my @fields = qw|VEID NAME STATUS IP_ADDRESS PHYSPAGES SWAPPAGES DISKSPACE CPUUNITS|;
+my $format = "% 6s  % 16s  % 8s  % 16s  % 10s  % 10s  % 10s  % 8s\n";
+
+my $header = sprintf $format, @fields;
+
+my $line = ''; 
+$line .= '-' for 0 .. length($header);
+$line .= "\n";
+
+print $header, $line;
+for my $container (@containers) {
+    printf $format, map {$container->{$_}} @fields;
+}
