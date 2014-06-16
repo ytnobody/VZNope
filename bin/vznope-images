@@ -3,9 +3,16 @@
 use strict;
 use warnings;
 use VZNope;
+use List::Util 'max';
 
 my @images = VZNope->images;
 
+my $name_length = max(map {length($_->{name})} @images);
+my $format = '% '. $name_length. "s    % 6s    % 16s\n";
+
+printf $format, qw|NAME SIZE MODIFIED|;
+printf "%s\n", join('', map {'-'} 0 .. $name_length + 29);
+
 for my $image (@images) {
-    printf "%s    %s\n", $image->{name}, $image->{update}->strftime('%Y-%m-%d %H:%M');
+    printf $format, $image->{name}, $image->{size} || '-' , $image->{update}->strftime('%Y-%m-%d %H:%M');
 }

@@ -27,7 +27,11 @@ sub get_list {
         my @stat = stat $_;
         my $name = $_;
         $name =~ s|$CACHEDIR/||;
-        { name => $name, update => Time::Piece->strptime($stat[9], '%s') };
+        { 
+            name => $name, 
+            size => sprintf('%0.01fM', $stat[7] / 1024 / 1024),
+            update => Time::Piece->strptime($stat[9], '%s'),
+        };
     } glob $search_path;
     
 }

@@ -1,0 +1,24 @@
+#!/usr/bin/env perl
+
+use strict;
+use warnings;
+use File::Spec;
+use File::Basename 'dirname';
+
+my $basedir = File::Spec->catdir(dirname(__FILE__));
+my $subcmd_glob = File::Spec->catfile($basedir, 'vznope-*');
+my @subcmd_list = map { s|$basedir/vznope-||; $_ } glob $subcmd_glob;
+
+print <<EOF;
+
+  usage: 
+    $0 [subcommand] [options]
+
+  subcommands:
+EOF
+
+for my $subcmd (@subcmd_list) {
+    printf "    %s\n", $subcmd;
+}
+
+print "\n";
