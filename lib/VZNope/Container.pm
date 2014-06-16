@@ -8,6 +8,7 @@ use Sys::HostIP;
 use Guard;
 use Cwd;
 use File::Slurp;
+use File::Copy;
 
 our $VEID;
 
@@ -32,21 +33,8 @@ sub create {
         '--ipadd'      => $opts{ip},
     ) or die 'Could not create a container';
 
-    my $pwd = getcwd;
-    {
-        my $guard = guard {
-            chdir $pwd;
-        };
-
-        my $ct_dir = File::Spec->catdir(CACHEDIR, $opts{id});
-        chdir $ct_dir;
-        if (system(qw|git init|)) {
-            warn 'Could not create a repository for container';
-            $class->destroy($opts{name});
-        }
-        system(qw|git add .|);
-        system(qw|git commit -m init|);
-    };
+    $class->sync_config($opts{id});
+    $class->git_init($opts{id});
 }
 
 sub destroy {
@@ -56,7 +44,7 @@ sub destroy {
 
 sub list {
     my $class = shift;
-    my $privdir = PRIVDIR;
+    my $privdir = CT_PRIVDIR;
     my $glob = File::Spec->catdir($privdir, '*');
     my @ct_list = glob($glob);
     map {
@@ -91,6 +79,51 @@ sub start {
 sub stop {
     my ($class, $ident) = @_;
     system('vzctl', stop => $ident);
+}
+
+sub fetch_config {
+    my ($class, $ident) = @_;
+
+    my @ct_list = $class->list;
+
+    my ($ct_target) = grep {$_->{NAME} eq $ident} @ct_list;
+    ($ct_target) = grep {$_->{VEID} eq $ident} @ct_list unless $ct_target;
+
+    $ct_target;
+}
+
+sub sync_config {
+    my ($class, $ident) = @_;
+
+    my $conf = $class->fetch_config($ident);
+    my $veid = $conf->{VEID};
+
+    my $conf_file = File::Spec->catfile(CT_CONFDIR, $veid. '.conf');
+    my $dest_conf = File::Spec->catfile(CT_PRIVDIR, $veid, 'etc', $veid. '.conf');
+
+    copy($conf_file, $dest_conf);
+}
+
+sub git_init {
+    my ($class, $ident) = @_;
+
+    my $ct = $class->fetch_config($ident);
+
+    my $pwd = getcwd;
+    {
+        my $guard = guard {
+            chdir $pwd;
+        };
+
+        my $ct_dir = File::Spec->catdir(CT_PRIVDIR, $ct->{VEID});
+        chdir $ct_dir;
+        if (system(qw|git init|)) {
+            warn 'Could not create a repository for container';
+            $class->destroy($ct->{VEID});
+        }
+        system(qw|git add .|);
+        system(qw|git commit -m init|);
+    };
 }
 
 1;

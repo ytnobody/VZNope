@@ -8,6 +8,7 @@ requires 'File::Basename';
 requires 'Sys::HostIP';
 requires 'Guard';
 requires 'File::Slurp';
+requires 'File::Copy';
 
 on 'test' => sub {
     requires 'Test::More', '0.98';
