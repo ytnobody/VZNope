@@ -4,4 +4,17 @@ use strict;
 use warnings;
 use VZNope;
 
-VZNope->destroy_container(@ARGV);
+my $ident = $ARGV[0];
+help () unless $ident;
+VZNope->destroy_container($ident);
+
+sub help {
+    print do {local $/; <DATA>};
+    exit;
+}
+
+__DATA__
+
+  usage:
+    vzn destroy [CTID or NAME]
+
