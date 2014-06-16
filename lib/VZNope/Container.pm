@@ -126,4 +126,21 @@ sub git_init {
     };
 }
 
+sub git {
+    my ($class, $ident, @opts) = @_;
+
+    my $ct = $class->fetch_config($ident);
+
+    my $pwd = getcwd;
+    {
+        my $guard = guard {
+            chdir $pwd;
+        };
+
+        my $ct_dir = File::Spec->catdir(CT_PRIVDIR, $ct->{VEID});
+        chdir $ct_dir;
+        system(qw|git|, @opts);
+    };
+}
+
 1;

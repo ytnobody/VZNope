@@ -52,6 +52,11 @@ sub stop_container {
     VZNope::Container->stop($ident);
 }
 
+sub container_git {
+    my ($class, $ident, @opts) = @_;
+    VZNope::Container->git($ident, @opts);
+}
+
 1;
 __END__
 
