@@ -42,6 +42,16 @@ sub containers {
     VZNope::Container->list;
 }
 
+sub start_container {
+    my ($class, $ident) = @_;
+    VZNope::Container->start($ident);
+}
+
+sub stop_container {
+    my ($class, $ident) = @_;
+    VZNope::Container->stop($ident);
+}
+
 1;
 __END__
 

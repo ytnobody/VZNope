@@ -83,4 +83,14 @@ sub is_running {
     scalar(glob "$ve_root/*") ? 'running' : 'stopped';
 }
 
+sub start {
+    my ($class, $ident) = @_;
+    system('vzctl', start => $ident);
+}
+
+sub stop {
+    my ($class, $ident) = @_;
+    system('vzctl', stop => $ident);
+}
+
 1;
