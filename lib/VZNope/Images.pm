@@ -5,9 +5,7 @@ use LWP::UserAgent;
 use Carp;
 use Time::Piece;
 use File::Spec;
-
-our $BASEURL  = $ENV{VZNOPE_IMAGES_URL} || 'http://download.openvz.org/template/precreated/';
-our $CACHEDIR = $ENV{VZNOPE_IMAGE_CACHE_DIR} || File::Spec->catdir(qw|/ var lib vz template cache|);
+use VZNope::Constants;
 
 my $agent = LWP::UserAgent->new(agent => __PACKAGE__);
 
@@ -22,11 +20,12 @@ sub req {
 
 sub get_list {
     my $class = shift;
-    my $search_path = File::Spec->catfile($CACHEDIR, '*.tar.gz');
+    my $cache_dir = CACHEDIR;
+    my $search_path = File::Spec->catfile($cache_dir, '*.tar.gz');
     map {
         my @stat = stat $_;
         my $name = $_;
-        $name =~ s|$CACHEDIR/||;
+        $name =~ s|$cache_dir/||;
         $name =~ s|.tar.gz||;
         { 
             name => $name, 
@@ -39,7 +38,8 @@ sub get_list {
 
 sub get_available {
     my ($class, $subtype) = @_;
-    my $url = $subtype ? $BASEURL.$subtype : $BASEURL;
+    my $baseurl = BASEURL;
+    my $url = $subtype ? $baseurl.$subtype : $baseurl;
     my $res = $class->req($url);
     my @matched = 
         $res->content =~ 
@@ -55,7 +55,7 @@ sub get_available {
 
 sub get_subtypes {
     my $class = shift;
-    my $url = $BASEURL;
+    my $url = BASEURL;
     my $res = $class->req($url);
 
     my @matched = 
@@ -73,8 +73,10 @@ sub get_subtypes {
 sub fetch {
     my ($class, $target, $subtype) = @_;
 
-    my $url = $subtype ? "$BASEURL$subtype/$target.tar.gz" : "$BASEURL$target.tar.gz";
-    my $dest_path = File::Spec->catfile($CACHEDIR, "$target.tar.gz");
+    my $baseurl = BASEURL;
+    my $cache_dir = CACHEDIR;
+    my $url = $subtype ? "$baseurl$subtype/$target.tar.gz" : "$baseurl$target.tar.gz";
+    my $dest_path = File::Spec->catfile($cache_dir, "$target.tar.gz");
 
     system('wget', $url, '-O', $dest_path);
 }
