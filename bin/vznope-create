@@ -1,0 +1,29 @@
+#!/usr/bin/env perl
+
+use strict;
+use warnings;
+use VZNope;
+
+my ($ctid, $image, $name) = @ARGV;
+
+if ($ctid && $image) {
+    VZNope->create_container(
+        id    => $ctid, 
+        image => $image, 
+        name  => $name
+    );
+} 
+else {
+    help();
+}
+
+sub help {
+    print do{ local $/; <DATA> };
+    exit;
+}
+
+__DATA__
+
+  usage:
+    vzn create [CTID] [image] [hostname]
+

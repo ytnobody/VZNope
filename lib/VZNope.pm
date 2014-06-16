@@ -3,6 +3,7 @@ use 5.008005;
 use strict;
 use warnings;
 use VZNope::Images;
+use VZNope::Container;
 
 our $VERSION = "0.01";
 
@@ -26,6 +27,10 @@ sub get_image {
     VZNope::Images->fetch($name, $subtype);
 }
 
+sub create_container {
+    my ($class, %opts) = @_;
+    VZNope::Container->create(%opts);
+}
 
 1;
 __END__

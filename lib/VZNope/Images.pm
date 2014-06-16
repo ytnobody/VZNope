@@ -27,6 +27,7 @@ sub get_list {
         my @stat = stat $_;
         my $name = $_;
         $name =~ s|$CACHEDIR/||;
+        $name =~ s|.tar.gz||;
         { 
             name => $name, 
             size => sprintf('%0.01fM', $stat[7] / 1024 / 1024),
