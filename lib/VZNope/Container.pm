@@ -25,4 +25,9 @@ sub create {
     );
 }
 
+sub destroy {
+    my ($class, $ident) = @_;
+    system('vzctl', destroy => $ident);
+}
+
 1;

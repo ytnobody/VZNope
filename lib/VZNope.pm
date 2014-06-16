@@ -32,6 +32,11 @@ sub create_container {
     VZNope::Container->create(%opts);
 }
 
+sub destroy_container {
+    my ($class, $ident) = @_;
+    VZNope::Container->destroy($ident);
+}
+
 1;
 __END__
 
