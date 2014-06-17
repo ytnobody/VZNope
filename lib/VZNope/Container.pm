@@ -11,6 +11,7 @@ use File::Slurp;
 use File::Copy;
 
 our $VEID;
+our $DO_SYSTEM = 1;
 
 sub create {
     my ($class, %opts) = @_;
@@ -24,7 +25,7 @@ sub create {
         $opts{ip} ||= sprintf($network, $opts{id});
     }
 
-    ! system(
+    ! $class->cmd(
         'vzctl', 
         create         => $opts{id}, 
         '--ostemplate' => $opts{image}, 
@@ -34,12 +35,15 @@ sub create {
     ) or die 'Could not create a container';
 
     $class->sync_config($opts{id});
-    $class->git_init($opts{id});
+
+    $class->git($opts{id}, 'init');
+    $class->git($opts{id}, qw|add .|);
+    $class->git($opts{id}, qw|commit -m init|);
 }
 
 sub destroy {
     my ($class, $ident) = @_;
-    system('vzctl', destroy => $ident);
+    $class->cmd('vzctl', destroy => $ident);
 }
 
 sub list {
@@ -51,7 +55,8 @@ sub list {
         my ($id) = $_ =~ m|^$privdir/([0-9]+)$|;
         my $conf = $class->conf($id);
         my $status = $class->is_running($id);
-        { VEID => $id, STATUS => $status, %$conf };
+        my $commit = sub { $class->commit_hash($id) };
+        { VEID => $id, STATUS => $status, COMMIT => $commit, %$conf };
     } @ct_list;
 }
 
@@ -73,12 +78,12 @@ sub is_running {
 
 sub start {
     my ($class, $ident) = @_;
-    system('vzctl', start => $ident);
+    $class->cmd('vzctl', start => $ident);
 }
 
 sub stop {
     my ($class, $ident) = @_;
-    system('vzctl', stop => $ident);
+    $class->cmd('vzctl', stop => $ident);
 }
 
 sub fetch_config {
@@ -104,33 +109,15 @@ sub sync_config {
     copy($conf_file, $dest_conf);
 }
 
-sub git_init {
+sub commit_hash {
     my ($class, $ident) = @_;
-
-    my $ct = $class->fetch_config($ident);
-
-    my $pwd = getcwd;
-    {
-        my $guard = guard {
-            chdir $pwd;
-        };
-
-        my $ct_dir = File::Spec->catdir(CT_PRIVDIR, $ct->{VEID});
-        chdir $ct_dir;
-        if (system(qw|git init|)) {
-            warn 'Could not create a repository for container';
-            $class->destroy($ct->{VEID});
-        }
-        system(qw|git add .|);
-        system(qw|git commit -m init|);
-    };
+    my $hash = $class->git_exec($ident, qw|log --format=format:%h -n 1|);
+    $hash =~ s/\r|\n//gr;
 }
 
 sub git {
     my ($class, $ident, @opts) = @_;
-
     my $ct = $class->fetch_config($ident);
-
     my $pwd = getcwd;
     {
         my $guard = guard {
@@ -139,8 +126,19 @@ sub git {
 
         my $ct_dir = File::Spec->catdir(CT_PRIVDIR, $ct->{VEID});
         chdir $ct_dir;
-        system(qw|git|, @opts);
+        $class->cmd(qw|git|, @opts);
     };
+}
+
+sub git_exec {
+    my ($class, $ident, @opts) = @_;
+    local $DO_SYSTEM = 0;
+    $class->git($ident, @opts);
+}
+
+sub cmd {
+    my $class = shift;
+    $DO_SYSTEM ? system(@_) : `@_`;
 }
 
 1;
