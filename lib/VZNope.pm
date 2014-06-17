@@ -2,10 +2,15 @@ package VZNope;
 use 5.008005;
 use strict;
 use warnings;
+use VZNope::Constants;
 use VZNope::Images;
 use VZNope::Container;
+use VZNope::MetaData;
 
 our $VERSION = "0.01";
+
+mkdir WORKDIR unless -d WORKDIR;
+mkdir CT_METADIR unless -d CT_METADIR;
 
 sub images {
     my ($class) = @_;
@@ -52,9 +57,10 @@ sub stop_container {
     VZNope::Container->stop($ident);
 }
 
-sub container_git {
+sub commit {
     my ($class, $ident, @opts) = @_;
-    VZNope::Container->git($ident, @opts);
+    my $ct = VZNope::Container->fetch_config($ident);
+    VZNope::MetaData->commit($ct->{VEID}, @opts);
 }
 
 1;

@@ -4,9 +4,9 @@ use strict;
 use warnings;
 use VZNope;
 
-my $ident = shift;
+my $ident = $ARGV[0];
 help() unless $ident;
-VZNope->container_git($ident, @ARGV);
+VZNope->commit($ident);
 
 sub help {
     print do{ local $/; <DATA> };
@@ -16,5 +16,5 @@ sub help {
 __DATA__
 
   usage:
-    vzn git [options for git]
+    vzn commit [VEID or NAME] [MESSAGE]
 
