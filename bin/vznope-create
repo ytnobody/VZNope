@@ -25,5 +25,5 @@ sub help {
 __DATA__
 
   usage:
-    vzn create [CTID] [image] [hostname]
+    vzn create [CTID] [image] [hostname] ([ip-address])
 
