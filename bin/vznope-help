@@ -12,7 +12,7 @@ my @subcmd_list = map { s|$basedir/vznope-||; $_ } glob $subcmd_glob;
 print <<EOF;
 
   usage: 
-    $0 [subcommand] [options]
+    vzn [subcommand] [options]
 
   subcommands:
 EOF
