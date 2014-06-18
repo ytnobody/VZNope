@@ -24,8 +24,25 @@ sub build {
     my $ctid = $opts{id};
     my $name = $opts{name};
     my @lines = @{$opts{script}};
-    for my $line (@lines) {
+
+    my @logs = VZNope::MetaData->commit_logs($ctid);
+
+    for my $i (0 .. $#lines) {
+        my $line = $lines[$i];
         chomp($line);
+
+        my $pair_log = $logs[$i];
+        if ($pair_log) {
+            if ($pair_log->{message} eq 'created' && $line =~ /^create /) {
+                printf "SKIP: %s\nalready commited (%s)\n\n", $line, $pair_log->{hash};
+                next;
+            }
+            elsif ($pair_log->{message} eq $line) {
+                printf "SKIP: %s\nalready commited (%s)\n\n", $line, $pair_log->{hash};
+                next;
+            }
+        }
+
         my ($method, @opts) = split(' ', $line);
         my $task = sub { $class->run($ctid, $method, @opts) };
         if ($method eq 'create' && $name) {

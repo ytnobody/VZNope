@@ -67,7 +67,7 @@ sub conffile {
 
 sub git {
     my ($class, $id, @opts) = @_;
-    if ($id) {
+    if (-d $class->metadir($id)) {
         my $pwd = getcwd;
         {
             my $guard = guard {
@@ -97,10 +97,22 @@ sub init {
 
 sub commit {
     my ($class, $id, $message) = @_;
-    if ($id) {
+    if ($class) {
         $class->sync_config($id);
         $class->git($id, 'add', '.');
         $message ? $class->git($id, 'commit', '-m', $message) : $class->git($id, 'commit');
+    }
+}
+
+sub commit_logs {
+    my ($class, $id) = @_;
+    if ($id) {
+        my @logs = $class->git_exec($id, qw[log --format='format:%h|%s']);
+        reverse map {
+            chomp;
+            my ($hash, $message) = split(/\|/, $_, 2);
+            {hash => $hash, message => $message};
+        } grep {$_} @logs;
     }
 }
 
