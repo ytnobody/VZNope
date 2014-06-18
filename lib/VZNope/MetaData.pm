@@ -14,35 +14,42 @@ our $DO_SYSTEM = 1;
 
 sub add_action {
     my ($class, $id, $action, @opts) = @_;
-    my $vznfile = $class->vznfile($id);
-    my $row = join(' ', $action, @opts). "\n";
-    write_file($vznfile, {append => 1}, $row);
+    if ($id) {
+        my $vznfile = $class->vznfile($id);
+        my $row = join(' ', $action, @opts). "\n";
+        write_file($vznfile, {append => 1}, $row);
+    }
 }
 
 sub remove {
     my ($class, $id) = @_;
-    my $vznfile = $class->vznfile($id);
-    my $conffile = $class->conffile($id);
-    my $metadir = $class->metadir($id);
-    unlink $vznfile if -e $vznfile;
-    unlink $conffile if -e $conffile;
-    rmdir $metadir;
+    if ($id) {
+        my $vznfile = $class->vznfile($id);
+        my $conffile = $class->conffile($id);
+        my $metadir = $class->metadir($id);
+        unlink $vznfile if -e $vznfile;
+        unlink $conffile if -e $conffile;
+        rmdir $metadir;
+    }
 }
 
 sub sync_config {
     my ($class, $id) = @_;
-
-    my $conf_file = File::Spec->catfile(CT_CONFDIR, $id. '.conf');
-    my $metadir = $class->metadir($id);
-    my $dest_conf = $class->conffile($id);
-
-    copy($conf_file, $dest_conf);
+    if ($id) {
+        my $conf_file = File::Spec->catfile(CT_CONFDIR, $id. '.conf');
+        my $metadir = $class->metadir($id);
+        my $dest_conf = $class->conffile($id);
+    
+        copy($conf_file, $dest_conf);
+    }
 }
 
 sub commit_hash {
     my ($class, $id) = @_;
-    my $hash = $class->git_exec($id, qw|log --format=format:%h -n 1|);
-    $hash =~ s/\r|\n//gr;
+    if ($id) {
+        my $hash = $class->git_exec($id, qw|log --format=format:%h -n 1|);
+        $hash =~ s/\r|\n//gr;
+    }
 }
 
 sub metadir {
@@ -64,15 +71,17 @@ sub conffile {
 
 sub git {
     my ($class, $id, @opts) = @_;
-    my $pwd = getcwd;
-    {
-        my $guard = guard {
-            chdir $pwd;
+    if ($id) {
+        my $pwd = getcwd;
+        {
+            my $guard = guard {
+                chdir $pwd;
+            };
+    
+            chdir $class->metadir($id);
+            $DO_SYSTEM ? system(qw|git|, @opts) : `git @opts`;
         };
-
-        chdir $class->metadir($id);
-        $DO_SYSTEM ? system(qw|git|, @opts) : `git @opts`;
-    };
+    }
 }
 
 sub git_exec {
@@ -83,16 +92,20 @@ sub git_exec {
 
 sub init {
     my ($class, $id) = @_;
-    my $metadir = $class->metadir($id);
-    mkdir $metadir unless -d $metadir;
-    $class->git($id, 'init');
+    if ($id) {
+        my $metadir = $class->metadir($id);
+        mkdir $metadir unless -d $metadir;
+        $class->git($id, 'init');
+    }
 }
 
 sub commit {
     my ($class, $id, $message) = @_;
-    $class->sync_config($id);
-    $class->git($id, 'add', '.');
-    $message ? $class->git($id, 'commit', '-m', $message) : $class->git($id, 'commit');
+    if ($id) {
+        $class->sync_config($id);
+        $class->git($id, 'add', '.');
+        $message ? $class->git($id, 'commit', '-m', $message) : $class->git($id, 'commit');
+    }
 }
 
 1;
