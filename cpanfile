@@ -1,4 +1,4 @@
-requires 'perl', '5.008001';
+requires 'perl', '5.012';
 requires 'LWP::UserAgent';
 requires 'Carp';
 requires 'Time::Piece';

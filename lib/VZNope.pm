@@ -1,5 +1,5 @@
 package VZNope;
-use 5.008005;
+use 5.012;
 use strict;
 use warnings;
 use VZNope::Constants;
