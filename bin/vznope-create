@@ -24,6 +24,10 @@ sub help {
 
 __DATA__
 
+# vzn create
+
+Create a new container from specified image to target CTID
+
   usage:
     vzn create [CTID] [image] [hostname] ([ip-address])
 

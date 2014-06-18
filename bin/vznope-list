@@ -24,3 +24,4 @@ for my $container (@containers) {
         ;
     } @fields;
 }
+print $line;

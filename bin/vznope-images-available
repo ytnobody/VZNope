@@ -18,3 +18,12 @@ for my $image (@images) {
     printf $format, $image->{name}, $image->{size} || '-' , $image->{modified}->strftime('%Y-%m-%d %H:%M');
 }
 
+printf "%s\n", join('', map {'-'} 0 .. $name_length + 29);
+
+print <<EOF unless $subtype;
+
+note: 
+  'vzn images-available subtypes' to show the list of image subtypes
+  'vzn images-available beta' to show the list of images that is assigned to beta subtype
+
+EOF

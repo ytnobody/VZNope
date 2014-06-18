@@ -16,6 +16,10 @@ sub help {
 
 __DATA__
 
+# vzn commit-log
+
+Show commit-log of metadata and config for specified container
+
   usage:
     vzn commit-log [CTID or NAME]
 

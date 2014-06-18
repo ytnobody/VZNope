@@ -15,6 +15,10 @@ sub help {
 
 __DATA__
 
+# vzn exec
+
+Execute specified command in a container. If succeed, append a command-line into vznfile.
+
   usage:
     vzn exec [CTID or NAME] [COMMAND] [options] ...
 

@@ -16,6 +16,10 @@ sub help {
 
 __DATA__
 
+# vzn start
+
+Start a specified container. Then, append start command into vznfile.
+
   usage:
     vzn start [CTID or NAME]
 

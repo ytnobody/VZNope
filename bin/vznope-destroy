@@ -16,6 +16,8 @@ sub help {
 
 __DATA__
 
+Stop and remove a specified container
+
   usage:
     vzn destroy [CTID or NAME]
 

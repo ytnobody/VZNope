@@ -14,7 +14,12 @@ unless ($target) {
 VZNope->get_image($target, $subtype);
 
 __DATA__
+
+# vzn get-image
+
+Download and deploy a specified image.
+
 usage:
 
-  vznope-get-image [image-name] [subtype]
+  vzn get-image [image-name] ([subtype])
 

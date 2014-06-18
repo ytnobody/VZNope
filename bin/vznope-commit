@@ -15,6 +15,10 @@ sub help {
 
 __DATA__
 
+# vzn commit
+
+Commit metadata and config for specified container
+
   usage:
     vzn commit [VEID or NAME] [MESSAGE]
 

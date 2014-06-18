@@ -20,6 +20,10 @@ sub help {
 
 __DATA__
 
+# vzn build
+
+Build a new container from vznfile
+
   usage:
     vzn build [CTID] ([NAME]) < /path/to/vznfile
 

@@ -16,6 +16,10 @@ sub help {
 
 __DATA__
 
+# vzn stop
+
+Stop a specified container. Then, append stop command into vznfile.
+
   usage:
     vzn stop [CTID or NAME]
 
