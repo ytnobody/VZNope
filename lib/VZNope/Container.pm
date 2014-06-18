@@ -11,8 +11,10 @@ use File::Slurp;
 
 our $DO_SYSTEM = 1;
 
+use Data::Dumper;
 sub create {
     my ($class, %opts) = @_;
+warn Dumper([@_]);
     $opts{name} ||= random_name();
 
     my $id = delete $opts{id};

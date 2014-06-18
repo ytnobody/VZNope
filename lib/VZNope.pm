@@ -6,6 +6,7 @@ use VZNope::Constants;
 use VZNope::Images;
 use VZNope::Container;
 use VZNope::MetaData;
+use VZNope::Builder;
 
 our $VERSION = "0.01";
 
@@ -72,6 +73,11 @@ sub commit_log {
 sub exec {
     my ($class, $ident, @cmd) = @_;
     VZNope::Container->exec($ident, @cmd);
+}
+
+sub build {
+    my ($class, %opts) = @_;
+    VZNope::Builder->build(%opts);
 }
 
 1;

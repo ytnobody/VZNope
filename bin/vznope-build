@@ -1,0 +1,25 @@
+#!/usr/bin/env perl
+
+use strict;
+use warnings;
+use VZNope;
+
+my ($id, $name) = @ARGV;
+help() unless $id;
+my @script = <STDIN>;
+
+my %opts = (id => $id, script => [@script]);
+$opts{name} = $name if $name;
+
+VZNope->build(%opts);
+
+sub help {
+    print do{local $/; <DATA>};
+    exit;
+}
+
+__DATA__
+
+  usage:
+    vzn build [CTID] ([NAME]) < /path/to/vznfile
+
