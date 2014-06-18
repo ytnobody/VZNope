@@ -99,8 +99,8 @@ sub start {
         VZNope::MetaData->add_action($ct->{VEID}, 'start');
     }
     print "waiting enable the network ...\n";
-    while (! ping(hostname => $ct->{IP_ADDRESS}, count => 1, timeout => 1)) {
-        sleep 1;
+    unless(ping(hostname => $ct->{IP_ADDRESS}, count => 30, timeout => 1)) {
+        croak 'GIVING UP!';
     }
     print "okay.\n";
     0; ### for build command
