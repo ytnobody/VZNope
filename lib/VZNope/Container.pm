@@ -36,6 +36,7 @@ sub create {
 
     VZNope::MetaData->init($id);
     VZNope::MetaData->add_action($id, 'create', @opts{qw|image name|});
+    $class->set($id, '--nameserver', '8.8.8.8');
     VZNope::MetaData->commit($id, 'created');
 }
 
@@ -44,18 +45,18 @@ sub destroy {
     my ($class, $ident) = @_;
 
     my $ct = $class->fetch_config($ident);
-    $class->cmd('vzctl', destroy => $ident);
-
-    VZNope::MetaData->remove($ct->{VEID});
+    unless ($class->cmd('vzctl', destroy => $ident)) {
+        VZNope::MetaData->remove($ct->{VEID});
+    }
 }
 
 sub exec {
     my ($class, $ident, @cmd) = @_;
 
     my $ct = $class->fetch_config($ident);
-    $class->cmd('vzctl', exec => $ident, @cmd);
-
-    VZNope::MetaData->add_action($ct->{VEID}, 'exec', @cmd);
+    unless ($class->cmd('vzctl', exec => $ident, @cmd)) {
+        VZNope::MetaData->add_action($ct->{VEID}, 'exec', @cmd);
+    }
 }
 
 sub list {
@@ -92,18 +93,18 @@ sub start {
     my ($class, $ident) = @_;
 
     my $ct = $class->fetch_config($ident);
-    $class->cmd('vzctl', start => $ident);
-
-    VZNope::MetaData->add_action($ct->{VEID}, 'start');
+    unless ($class->cmd('vzctl', start => $ident)) {
+        VZNope::MetaData->add_action($ct->{VEID}, 'start');
+    }
 }
 
 sub stop {
     my ($class, $ident) = @_;
 
     my $ct = $class->fetch_config($ident);
-    $class->cmd('vzctl', stop => $ident);
-
-    VZNope::MetaData->add_action($ct->{VEID}, 'stop');
+    unless ($class->cmd('vzctl', stop => $ident)) {
+        VZNope::MetaData->add_action($ct->{VEID}, 'stop');
+    }
 }
 
 sub fetch_config {
@@ -115,6 +116,14 @@ sub fetch_config {
     ($ct_target) = grep {$_->{VEID} eq $ident} @ct_list unless $ct_target;
 
     $ct_target;
+}
+
+sub set {
+    my ($class, $ident, @opts) = @_;
+    my $ct = $class->fetch_config($ident);
+    unless ($class->cmd('vzctl', set => $ct->{VEID}, @opts, '--save')) {
+        VZNope::MetaData->add_action($ct->{VEID}, 'set', @opts);
+    }
 }
 
 sub cmd {

@@ -63,6 +63,17 @@ sub commit {
     VZNope::MetaData->commit($ct->{VEID}, @opts);
 }
 
+sub commit_log {
+    my ($class, $ident) = @_;
+    my $ct = VZNope::Container->fetch_config($ident);
+    VZNope::MetaData->git($ct->{VEID}, 'log');
+}
+
+sub exec {
+    my ($class, $ident, @cmd) = @_;
+    VZNope::Container->exec($ident, @cmd);
+}
+
 1;
 __END__
 

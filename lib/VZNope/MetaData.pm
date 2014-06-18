@@ -24,12 +24,8 @@ sub add_action {
 sub remove {
     my ($class, $id) = @_;
     if ($id) {
-        my $vznfile = $class->vznfile($id);
-        my $conffile = $class->conffile($id);
         my $metadir = $class->metadir($id);
-        unlink $vznfile if -e $vznfile;
-        unlink $conffile if -e $conffile;
-        rmdir $metadir;
+        system('rm', '-rf', $metadir);
     }
 }
 

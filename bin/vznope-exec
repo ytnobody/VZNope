@@ -6,15 +6,15 @@ use VZNope;
 
 my $ident = shift(@ARGV);
 help() unless $ident;
-VZNope->commit($ident, @ARGV);
+VZNope->exec($ident, @ARGV);
 
 sub help {
-    print do{ local $/; <DATA> };
+    print do {local $/; <DATA>};
     exit;
 }
 
 __DATA__
 
   usage:
-    vzn commit [VEID or NAME] [MESSAGE]
+    vzn exec [CTID or NAME] [COMMAND] [options] ...
 
