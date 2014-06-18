@@ -8,13 +8,12 @@ use VZNope::Util qw|random_name parse_conf|;
 use VZNope::MetaData;
 use Sys::HostIP;
 use File::Slurp;
+use Net::Ping::External 'ping';
 
 our $DO_SYSTEM = 1;
 
-use Data::Dumper;
 sub create {
     my ($class, %opts) = @_;
-warn Dumper([@_]);
     $opts{name} ||= random_name();
 
     my $id = delete $opts{id};
@@ -59,6 +58,7 @@ sub exec {
     unless ($class->cmd('vzctl', exec => $ident, @cmd)) {
         VZNope::MetaData->add_action($ct->{VEID}, 'exec', @cmd);
     }
+    0; ### for build command
 }
 
 sub list {
@@ -98,6 +98,12 @@ sub start {
     unless ($class->cmd('vzctl', start => $ident)) {
         VZNope::MetaData->add_action($ct->{VEID}, 'start');
     }
+    print "waiting enable the network ...\n";
+    while (! ping(hostname => $ct->{IP_ADDRESS}, count => 1, timeout => 1)) {
+        sleep 1;
+    }
+    print "okay.\n";
+    0; ### for build command
 }
 
 sub stop {
@@ -107,6 +113,7 @@ sub stop {
     unless ($class->cmd('vzctl', stop => $ident)) {
         VZNope::MetaData->add_action($ct->{VEID}, 'stop');
     }
+    0; ### for build command
 }
 
 sub fetch_config {
@@ -126,6 +133,7 @@ sub set {
     unless ($class->cmd('vzctl', set => $ct->{VEID}, @opts, '--save')) {
         VZNope::MetaData->add_action($ct->{VEID}, 'set', @opts);
     }
+    0; ### for build command
 }
 
 sub cmd {

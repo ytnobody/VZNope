@@ -6,6 +6,7 @@ use VZNope;
 
 my $ident = $ARGV[0];
 help () unless $ident;
+VZNope->stop_container($ident);
 VZNope->destroy_container($ident);
 
 sub help {

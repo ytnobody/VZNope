@@ -11,12 +11,12 @@ sub run {
     printf "[CT:%s] RUN: %s %s\n", $ctid, $method, join(' ', @opts);
     my $task = sub { VZNope::Container->$method($ctid, @opts) };
     if ($method eq 'create') {
-        my ($image, $default_name, $name) = @opts;
-        $name ||= $default_name;
+        my ($image, $name) = @opts;
         $task = sub { VZNope::Container->$method(id => $ctid, image => $image, name => $name) };
     }
-    eval { $task->() };
-    croak $@ if $@;
+    if ( $task->() ) {
+        croak 'Task FAIL!';
+    }
 }
 
 sub build {
@@ -29,9 +29,10 @@ sub build {
         my ($method, @opts) = split(' ', $line);
         my $task = sub { $class->run($ctid, $method, @opts) };
         if ($method eq 'create' && $name) {
-            $task = sub { $class->run($ctid, $method, @opts, $name) };
+            my ($image, $default_name) = @opts;
+            $task = sub { $class->run($ctid, $method, $image, $name) };
         }
-
+        $task->();
         my $commit_mes = sprintf("RUN: '%s'", $line);      
         VZNope::MetaData->commit($ctid, $line);
     }
