@@ -4,13 +4,14 @@ use strict;
 use warnings;
 use VZNope;
 
-my ($ctid, $image, $name) = @ARGV;
+my ($ctid, $dist, $name, $ip) = @ARGV;
 
-if ($ctid && $image) {
+if ($ctid && $dist) {
     VZNope->create_container(
         id    => $ctid, 
-        image => $image, 
-        name  => $name
+        dist  => $dist, 
+        name  => $name,
+        ip    => $ip,
     );
 } 
 else {
@@ -29,5 +30,5 @@ __DATA__
 Create a new container from specified image to target CTID
 
   usage:
-    vzn create [CTID] [image] [hostname] ([ip-address])
+    vzn create [CTID] [distname](@[version]) [hostname] ([ip-address])
 

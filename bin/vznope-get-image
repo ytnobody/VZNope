@@ -4,14 +4,20 @@ use strict;
 use warnings;
 use VZNope;
 
-my ($target, $subtype) = @ARGV;
+my ($dist, %opts) = @ARGV;
+my $version = '';
 
-unless ($target) {
+unless ($dist) {
     print do{local $/; <DATA>};
     exit;
 }
 
-VZNope->get_image($target, $subtype);
+for my $key (keys %opts) {
+    my $newkey = $key =~ s/^\-\-?//r;
+    $opts{$newkey} = delete $opts{$key};
+}
+
+VZNope->get_image($dist, %opts);
 
 __DATA__
 
@@ -21,5 +27,10 @@ Download and deploy a specified image.
 
 usage:
 
-  vzn get-image [image-name] ([subtype])
+  vzn get-image [dist](@[version]) ([options])
+
+  options:
+    --subtype [subtype name]
+    --tag [tag name]
+    --arch [arch name]
 

@@ -29,8 +29,8 @@ sub image_subtypes {
 }
 
 sub get_image {
-    my ($class, $name, $subtype) = @_;
-    VZNope::Images->fetch($name, $subtype);
+    my ($class, $dist, $version, %opts) = @_;
+    VZNope::Images->fetch($dist, $version, %opts);
 }
 
 sub create_container {

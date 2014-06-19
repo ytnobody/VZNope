@@ -6,6 +6,7 @@ use Carp;
 use VZNope::Constants;
 use VZNope::Util qw|random_name parse_conf|;
 use VZNope::MetaData;
+use VZNope::Image;
 use Sys::HostIP;
 use File::Slurp;
 use Net::Ping::External 'ping';
@@ -26,10 +27,12 @@ sub create {
         $opts{ip} ||= sprintf($network, $id);
     }
 
+    my $image = VZNope::Image->image_name($opts{dist}, {});
+
     ! $class->cmd(
         'vzctl', 
         create         => $id, 
-        '--ostemplate' => $opts{image}, 
+        '--ostemplate' => $image, 
         '--name'       => $opts{name},
         '--hostname'   => $opts{name},
         '--ipadd'      => $opts{ip},
