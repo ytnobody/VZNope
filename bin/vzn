@@ -12,4 +12,4 @@ if [ -z "$subcmd" ] ; then
 fi
 
 cd $APPROOT
-$CARTON exec perl -Ilib $bindir/vznope-$subcmd $*
+$CARTON exec perl -Ilib -Ilocal/lib/perl5 $bindir/vznope-$subcmd $*

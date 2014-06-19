@@ -10,8 +10,8 @@ use VZNope::Builder;
 
 our $VERSION = "0.01";
 
-mkdir WORKDIR unless -d WORKDIR;
-mkdir CT_METADIR unless -d CT_METADIR;
+system('mkdir', WORKDIR, '-pv') unless -d WORKDIR;
+system('mkdir', CT_METADIR, '-pv') unless -d CT_METADIR;
 
 sub images {
     my ($class) = @_;
