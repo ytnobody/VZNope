@@ -30,6 +30,7 @@ sub build {
     for my $i (0 .. $#lines) {
         my $line = $lines[$i];
         chomp($line);
+        next unless $line;
 
         my $pair_log = $logs[$i];
         if ($pair_log) {

@@ -1,0 +1,8 @@
+create ubuntu-13.10-x86_64
+set --nameserver 8.8.8.8
+start
+exec apt-get update
+exec apt-get install -y nginx
+exec apt-get remove -y apache2
+exec service nginx start
+
