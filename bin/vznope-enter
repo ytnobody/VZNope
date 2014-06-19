@@ -1,3 +1,21 @@
-#!/bin/bash
+#!/usr/bin/env perl
 
-vzctl enter $*
+use strict;
+use warnings;
+
+my $ident = $ARGV[0];
+help() unless $ident;
+system(qw|vzctl enter|, $ident);
+
+sub help {
+    print do{local $/; <DATA>};
+    exit;
+}
+
+__DATA__
+
+# vzn enter
+
+  usage:
+    vzn enter [CTID or NAME]
+
