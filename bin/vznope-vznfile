@@ -1,0 +1,26 @@
+#!/usr/bin/env perl
+
+use strict;
+use warnings;
+use VZNope::Container;
+use VZNope::MetaData;
+
+my $ident = $ARGV[0];
+help() unless $ident;
+
+my $ct = VZNope::Container->fetch_config($ident);
+my $vznfile = VZNope::MetaData->vznfile($ct->{VEID});
+system('cat', $vznfile);
+
+sub help {
+    print do{local $/; <DATA>};
+    exit;
+}
+
+__DATA__
+
+# vzn vznfile
+
+  usage:
+    vzn vznfile [CTID or NAME]
+
