@@ -6,10 +6,16 @@ APPROOT=$bindir/..
 PERLROOT=$APPROOT/perl5/perl-5.18
 PERLBINDIR=$PERLROOT/bin
 CARTON=$PERLBINDIR/carton
+export PATH=$PERLBINDIR:$PATH
 
 if [ -z "$subcmd" ] ; then
     subcmd=help
 fi
 
 cd $APPROOT
-$CARTON exec perl -Ilib -Ilocal/lib/perl5 $bindir/vznope-$subcmd $*
+$CARTON exec \
+    perl \
+        -Ilib \
+        -Ilocal/lib/perl5 \
+        -Ilocal/lib/perl5/$(uname -i)-linux \
+    $bindir/vznope-$subcmd $*
