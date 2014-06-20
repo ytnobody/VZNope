@@ -4,14 +4,13 @@ use strict;
 use warnings;
 use VZNope;
 
-my ($id, $name) = @ARGV;
+my ($id, %opts) = @ARGV;
 help() unless $id;
 my @script = <STDIN>;
 
-my %opts = (id => $id, script => [@script]);
-$opts{name} = $name if $name;
+$opts{script} = [@script];
 
-VZNope->build(%opts);
+VZNope->build(id => $id, %opts);
 
 sub help {
     print do{local $/; <DATA>};
@@ -25,5 +24,10 @@ __DATA__
 Build a new container from vznfile
 
   usage:
-    vzn build [CTID] ([NAME]) < /path/to/vznfile
+    vzn build [CTID] [options] < /path/to/vznfile
+
+    options:
+      --name [hostname]
+      --ip [ip-address]
+      --arch [os-architecture]
 

@@ -6,13 +6,19 @@ use Carp;
 use VZNope::Container;
 use VZNope::MetaData;
 
+use Data::Dumper;
 sub run {
     my ($class, $ctid, $method, @opts) = @_;
     printf "[CT:%s] RUN: %s %s\n", $ctid, $method, join(' ', @opts);
     my $task = sub { VZNope::Container->$method($ctid, @opts) };
     if ($method eq 'create') {
-        my ($image, $name) = @opts;
-        $task = sub { VZNope::Container->$method(id => $ctid, image => $image, name => $name) };
+        my $dist = shift(@opts);
+        my %cmd_opts = ( @opts );
+        for my $key ( keys %cmd_opts ) {
+            my $newkey = $key =~ s/^\-\-//r;
+            $cmd_opts{$newkey} = delete $cmd_opts{$key};
+        }
+        $task = sub { VZNope::Container->$method(id => $ctid, dist => $dist, %cmd_opts) };
     }
     if ( $task->() ) {
         croak 'Task FAIL!';
@@ -20,10 +26,10 @@ sub run {
 }
 
 sub build {
-    my ($class, %opts) = @_;
-    my $ctid = $opts{id};
-    my $name = $opts{name};
-    my @lines = @{$opts{script}};
+    my ($class, %input_opts) = @_;
+
+    my $ctid = delete $input_opts{id};
+    my @lines = @{delete $input_opts{script}};
 
     my @logs = VZNope::MetaData->commit_logs($ctid);
 
@@ -46,9 +52,10 @@ sub build {
 
         my ($method, @opts) = split(' ', $line);
         my $task = sub { $class->run($ctid, $method, @opts) };
-        if ($method eq 'create' && $name) {
-            my ($image, $default_name) = @opts;
-            $task = sub { $class->run($ctid, $method, $image, $name) };
+
+        if ($method eq 'create') {
+            my $cmd_opts = [@opts, ( %input_opts )];
+            $task = sub { $class->run($ctid, $method, @$cmd_opts) };
         }
         $task->();
         my $commit_mes = sprintf("RUN: '%s'", $line);      

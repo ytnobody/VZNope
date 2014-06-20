@@ -6,7 +6,7 @@ use Carp;
 use VZNope::Constants;
 use VZNope::Util qw|random_name parse_conf|;
 use VZNope::MetaData;
-use VZNope::Image;
+use VZNope::Images;
 use Sys::HostIP;
 use File::Slurp;
 use Net::Ping::External 'ping';
@@ -15,6 +15,8 @@ our $DO_SYSTEM = 1;
 
 sub create {
     my ($class, %opts) = @_;
+    my %input_opts = %opts;
+
     $opts{name} ||= random_name();
 
     my $id = delete $opts{id};
@@ -27,7 +29,10 @@ sub create {
         $opts{ip} ||= sprintf($network, $id);
     }
 
-    my $image = VZNope::Image->image_name($opts{dist}, {});
+    my $image = VZNope::Images->image_name($opts{dist}, (
+        arch => $opts{arch},  
+        subtype => $opts{subtype},
+    ));
 
     ! $class->cmd(
         'vzctl', 
@@ -39,8 +44,18 @@ sub create {
     ) or die 'Could not create a container';
 
     VZNope::MetaData->init($id);
-    VZNope::MetaData->add_action($id, 'create', @opts{qw|image name|});
+
+    my $dist = delete $input_opts{dist};
+    my $input_id = delete $input_opts{id};
+
+    for my $key (keys %input_opts) {
+        my $newkey = '--'.$key;
+        $input_opts{$newkey} = delete $input_opts{$key};
+    }
+
+    VZNope::MetaData->add_action($id, 'create', $dist, %input_opts);
     $class->set($id, '--nameserver', '8.8.8.8');
+
     VZNope::MetaData->commit($id, 'created');
 }
 

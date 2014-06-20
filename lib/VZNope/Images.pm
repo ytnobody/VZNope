@@ -102,6 +102,7 @@ sub available_image_name {
 
     my $tag = $opts{tag};
     my $arch = $opts{arch} || `uname -i` =~ s/\n//r;
+    my $subtype = $opts{subtype};
     my $version = $dist =~ /\@/ ? 
         [$dist =~ /\@(.+)$/]->[0] : 
         $class->latest_available_version_of($dist, $arch, $subtype)
@@ -115,10 +116,12 @@ sub image_name {
 
     my $tag = $opts{tag};
     my $arch = $opts{arch} || `uname -i` =~ s/\n//r;
+    my $subtype = $opts{subtype};
     my $version = $dist =~ /\@/ ? 
         [$dist =~ /\@(.+)$/]->[0] : 
         $class->latest_version_of($dist, $arch, $subtype)
     ;
+    $dist = $dist =~ /\@/ ? [$dist =~ /^(.+)\@/]->[0] : $dist;
 
     join('-', grep {$_} ($dist, $version, $arch, $tag) );
 }
@@ -137,6 +140,7 @@ sub latest_available_version_of {
 sub latest_version_of {
     my ($class, $dist, $arch, $subtype) = @_;
     my @images = 
+        map {$_->{version}}
         sort {$b->{version}+0 <=> $a->{version}+0}
         grep {$_->{dist} eq $dist && $_->{arch} eq $arch} 
         $class->get_list($subtype)

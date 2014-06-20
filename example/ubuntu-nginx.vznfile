@@ -1,5 +1,4 @@
-create ubuntu-13.10-x86_64
-set --nameserver 8.8.8.8
+create ubuntu@14.10
 start
 exec apt-get update
 exec apt-get install -y nginx
