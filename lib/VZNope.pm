@@ -80,6 +80,11 @@ sub build {
     VZNope::Builder->build(%opts);
 }
 
+sub set {
+    my ($class, $ident, @opts) = @_;
+    VZNope::Container->set($ident, @opts);
+}
+
 1;
 __END__
 
