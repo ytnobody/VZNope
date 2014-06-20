@@ -92,7 +92,7 @@ __END__
 
 =head1 NAME
 
-VZNope - It's new $module
+VZNope - OpenVZ wrapper toolkit that aims to realize "Immutable Container"
 
 =head1 SYNOPSIS
 
@@ -100,7 +100,11 @@ VZNope - It's new $module
 
 =head1 DESCRIPTION
 
-VZNope is ...
+NOTICE!!!!
+
+THIS PRODUCT IS STILL ALPHA QUALITY. PLEASE USE YOUR OWN RISK.
+
+VZNope.pm is a wrapper tool for OpenVZ. PLEASE DO NOT USE THIS MODULE DIRECTLY.
 
 =head1 LICENSE
 
