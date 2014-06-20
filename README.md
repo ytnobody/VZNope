@@ -169,7 +169,7 @@ Then, you can enter into container with root authority.
 You can create another container with duplicated setting with vznfile and 'vzn build' command.
 
     $ vzn vznfile my_ct > my_ct.vznfile
-    $ vzn build 102 my_ct_2 < my_ct.vznfile
+    $ vzn build 102 --name my_ct_2 < my_ct.vznfile
 
 # LICENSE
 
