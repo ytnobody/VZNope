@@ -6,7 +6,6 @@ use Carp;
 use VZNope::Container;
 use VZNope::MetaData;
 
-use Data::Dumper;
 sub run {
     my ($class, $ctid, $method, @opts) = @_;
     printf "[CT:%s] RUN: %s %s\n", $ctid, $method, join(' ', @opts);
