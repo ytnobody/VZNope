@@ -5,7 +5,6 @@ requires 'Time::Piece';
 requires 'List::Util';
 requires 'File::Spec';
 requires 'File::Basename';
-requires 'Sys::HostIP';
 requires 'Guard';
 requires 'File::Slurp';
 requires 'File::Copy';
