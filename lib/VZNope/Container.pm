@@ -7,6 +7,7 @@ use VZNope::Constants;
 use VZNope::Util qw|random_name parse_conf|;
 use VZNope::MetaData;
 use VZNope::Images;
+use Sys::HostIP;
 use File::Slurp;
 use Net::Ping::External 'ping';
 
@@ -21,7 +22,11 @@ sub create {
     my $id = delete $opts{id};
 
     unless ($opts{ip}) {
-        $opts{ip} ||= sprintf('127.0.1.%s', $id);
+        my $hostip = Sys::HostIP->new;
+        my @ip_list = ref( $hostip->ip ) eq 'ARRAY' ? @{$hostip->ip} : ($hostip->ip);
+        my $network = $ip_list[0];
+        $network =~ s|\.[0-9]+$|.%s|;
+        $opts{ip} ||= sprintf($network, $id);
     }
 
     my $image = VZNope::Images->image_name($opts{dist}, (
