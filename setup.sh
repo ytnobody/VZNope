@@ -11,6 +11,6 @@ if [ ! -d $PERLROOT ]; then
     chmod +x $BINDIR/cpanm &&
     $PERL $BINDIR/cpanm Carton --notest &&
     $PERL $BINDIR/carton 
-    echo . $APPROOT/vznope.bashrc >> $HOME/.bashrc
+    echo . $APPROOT/vznope.bashrc >> $HOME/.bash_profile
     exec /bin/bash
 fi
