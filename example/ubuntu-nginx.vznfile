@@ -1,7 +1,12 @@
+### create container
 create ubuntu@14.04
 start
+
+### resolv deps
 exec apt-get update
 exec apt-get install -y --force-yes nginx
 exec apt-get remove -y --force-yes apache2
+
+### start nginx
 exec service nginx start
 
