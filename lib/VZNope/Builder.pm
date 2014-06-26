@@ -40,11 +40,11 @@ sub build {
         my $pair_log = $logs[$i];
         if ($pair_log) {
             if ($pair_log->{message} eq 'created' && $line =~ /^create /) {
-                printf "SKIP: %s\nalready commited (%s)\n\n", $line, $pair_log->{hash};
+                printf "SKIP: %s\nalready committed (%s)\n\n", $line, $pair_log->{hash};
                 next;
             }
             elsif ($pair_log->{message} eq $line) {
-                printf "SKIP: %s\nalready commited (%s)\n\n", $line, $pair_log->{hash};
+                printf "SKIP: %s\nalready committed (%s)\n\n", $line, $pair_log->{hash};
                 next;
             }
         }
