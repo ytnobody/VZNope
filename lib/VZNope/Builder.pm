@@ -28,7 +28,7 @@ sub build {
     my ($class, %input_opts) = @_;
 
     my $ctid = delete $input_opts{id};
-    my @lines = grep {$_ !~ /^#/} grep {$_} @{delete $input_opts{script}};
+    my @lines = grep {$_ !~ /^#/} grep {$_ !~ /^$/} @{delete $input_opts{script}};
 
     my @logs = VZNope::MetaData->commit_logs($ctid);
 
