@@ -79,6 +79,11 @@ sub exec {
     0; ### for build command
 }
 
+sub exec_as {
+    my ($class, $user, $ident, @cmd) = @_;
+    $class->exec($ident, ('su', '-', $user, '-c', sprintf('"%s"', join(" ", @cmd))) );
+}
+
 sub list {
     my $class = shift;
     my $privdir = CT_PRIVDIR;

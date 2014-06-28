@@ -1,0 +1,24 @@
+#!/usr/bin/env perl
+
+use strict;
+use warnings;
+use VZNope;
+
+my ($user, $ident) = (shift @ARGV, shift @ARGV);
+help() unless $ident && $user;
+VZNope->exec_as($user, $ident, @ARGV);
+
+sub help {
+    print do {local $/; <DATA>};
+    exit;
+}
+
+__DATA__
+
+# vzn exec
+
+Execute specified command in a container. If succeed, append a command-line into vznfile.
+
+  usage:
+    vzn exec-as [USER] [CTID or NAME] [COMMAND] [options] ...
+

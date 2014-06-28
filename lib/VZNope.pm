@@ -75,6 +75,11 @@ sub exec {
     VZNope::Container->exec($ident, @cmd);
 }
 
+sub exec_as {
+    my ($class, $user, $ident, @cmd) = @_;
+    VZNope::Container->exec_as($user, $ident, @cmd);
+}
+
 sub build {
     my ($class, %opts) = @_;
     VZNope::Builder->build(%opts);
