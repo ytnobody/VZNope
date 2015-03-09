@@ -6,6 +6,10 @@ vzn - OpenVZ wrapper toolkit that aims to realize "Immutable Container"
 
 vzn is a wrapper command that is provided by VZNope.
 
+# STATUS OF DEVELOPMENT
+
+** This project is frozen. ** Because, [vznope-bash](https://github.com/ytnobody/vznope-bash) took over this project.
+
 # DEPENDENCIES
 
 * openvz
